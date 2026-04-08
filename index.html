@@ -1,1 +1,438 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>小小特工訓練營｜秘密任務終端機</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
 
+        :root {
+            --agent-blue: #2563eb;
+            --agent-cyan: #06b6d4;
+            --agent-yellow: #facc15;
+            --agent-bg: #f0f4f8;
+        }
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: var(--agent-bg);
+            color: #1e293b;
+            overflow-x: hidden;
+            font-size: 16px; 
+        }
+
+        /* 圓潤的卡片與按鈕 */
+        .card-agent {
+            background: #ffffff;
+            border: 3px solid #e2e8f0;
+            border-radius: 2rem;
+            box-shadow: 0 8px 0 #cbd5e1;
+            transition: transform 0.2s;
+        }
+
+        .btn-agent {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 5px 0 #1e3a8a;
+            transition: all 0.1s;
+        }
+
+        .btn-agent:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #1e3a8a;
+        }
+
+        /* 掃描動畫改為可愛藍色 */
+        .scanline {
+            width: 100%;
+            height: 4px;
+            background: rgba(37, 99, 235, 0.1);
+            position: fixed;
+            top: 0;
+            z-index: 100;
+            pointer-events: none;
+            animation: scan 3s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+
+        .page {
+            display: none;
+            animation: slideIn 0.4s ease-out;
+        }
+        .page.active { display: block; }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        input {
+            background: #f8fafc !important;
+            border: 2px solid #cbd5e1 !important;
+            border-radius: 1rem !important;
+            text-align: center;
+        }
+        input:focus {
+            border-color: var(--agent-blue) !important;
+            outline: none;
+        }
+
+        .stamp {
+            position: absolute;
+            transform: rotate(-15deg) scale(2.5);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
+            z-index: 100;
+        }
+        .stamp.active {
+            opacity: 1;
+            transform: rotate(-10deg) scale(1);
+        }
+
+        /* 勳章 */
+        .badge-agent {
+            background: #facc15;
+            color: #854d0e;
+            padding: 4px 16px;
+            font-weight: 900;
+            clip-path: polygon(10% 0, 90% 0, 100% 50%, 90% 100%, 10% 100%, 0 50%);
+        }
+    </style>
+</head>
+<body class="pb-24">
+    <div class="scanline"></div>
+
+    <div class="w-full bg-white border-b-4 border-blue-100 px-5 py-4 sticky top-0 z-40 flex justify-between items-center shadow-md">
+        <div class="flex items-center space-x-3">
+            <div id="status-led" class="w-4 h-4 rounded-full bg-blue-500 animate-pulse"></div>
+            <span id="status-text" class="text-xs font-black text-blue-600 uppercase tracking-tighter">小小特工：準備出動</span>
+        </div>
+        <div class="text-blue-800 font-black text-sm">特工終端機 V1.0</div>
+    </div>
+
+    <div class="p-5 max-w-md mx-auto">
+        
+        <section id="page-intro" class="page active">
+            <div class="text-center py-6">
+                <div class="flex justify-center mb-4">
+                    <div class="badge-agent text-sm">最高機密 · 超好玩任務</div>
+                </div>
+                <h1 class="text-4xl font-black tracking-tighter mb-1 text-blue-900">小小特工任務</h1>
+                <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-6">Agent In Training: Mission Start</p>
+            </div>
+
+            <div class="card-agent p-6 mb-6">
+                <h2 class="text-blue-600 font-black mb-4 flex items-center text-lg">
+                    <i class="fa-solid fa-user-secret mr-3"></i> 總部指令 (HQ)
+                </h2>
+                <div class="text-base text-slate-600 space-y-4 leading-relaxed">
+                    <p class="font-bold text-slate-800">特工小夥伴，請注意！</p>
+                    <p>基地偵測到神祕的訊號，我們需要最聰明的小特工，一起前往現場解開謎題。</p>
+                    <p class="p-3 bg-blue-50 border-2 border-dashed border-blue-200 rounded-2xl italic text-sm text-blue-700">
+                        「請爸爸媽媽擔任你的副特工，一起觀察周圍的線索喔！」
+                    </p>
+                </div>
+            </div>
+
+            <div class="card-agent p-6 mb-8">
+                <h2 class="text-cyan-600 font-black mb-5 flex items-center text-lg">
+                    <i class="fa-solid fa-clapperboard mr-3"></i> 任務簡報影片
+                </h2>
+                <div class="aspect-video bg-slate-100 rounded-2xl mb-6 relative overflow-hidden shadow-inner border-2 border-slate-50">
+                    <iframe class="w-full h-full" src="https://www.youtube.com/embed/IbYRhrFGPIo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center text-white font-black shadow-sm mr-4">1</div>
+                        <p class="text-sm font-bold text-slate-700">完成現場挑戰，獲得啟動密碼。</p>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-black shadow-sm mr-4">2</div>
+                        <p class="text-sm font-bold text-slate-700">在下方輸入密碼，開啟特工報告書。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="unlock-container" class="card-agent p-8 bg-blue-50/50 border-blue-200 text-center">
+                <div class="mb-5">
+                    <i class="fa-solid fa-key text-4xl text-blue-500 mb-2"></i>
+                    <p class="text-sm text-blue-900 font-black">請輸入通訊啟動碼 (STEP 1)</p>
+                </div>
+
+                <input type="text" id="accessCodeInput" class="w-full px-4 py-4 rounded-2xl text-2xl tracking-[0.4em] font-black mb-5 uppercase" placeholder="____">
+
+                <div id="error-msg" class="hidden text-red-500 text-sm mb-5 font-bold">
+                    <i class="fa-solid fa-circle-exclamation mr-2"></i> 訊號錯誤，再輸入一次看看！
+                </div>
+
+                <button onclick="checkAccessCode()" class="btn-agent w-full py-4 text-lg font-black tracking-widest">
+                    啟動特工通訊 <i class="fa-solid fa-tower-broadcast ml-2"></i>
+                </button>
+            </div>
+
+            <div id="unlocked-msg" class="hidden text-center p-8 bg-green-100 border-4 border-green-400 rounded-[2rem]">
+                <i class="fa-solid fa-circle-check text-green-500 text-5xl mb-3"></i>
+                <p class="text-green-700 text-xl font-black uppercase tracking-widest">通訊建立成功 / 開始回報任務</p>
+            </div>
+        </section>
+
+        <section id="page-form" class="page">
+            <div class="flex flex-col items-center mb-8">
+                <i class="fa-solid fa-file-signature text-blue-600 text-3xl mb-2"></i>
+                <h2 class="text-2xl font-black text-slate-800">特工任務報告書</h2>
+                <p class="text-[10px] text-slate-400 uppercase font-black tracking-[0.2em]">Agent Mission Report</p>
+            </div>
+
+            <div class="space-y-6">
+                <div class="card-agent p-6 border-blue-100">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-black text-slate-400 mb-2 uppercase">特工代號</label>
+                            <input type="text" id="teamName" class="w-full px-3 py-3 font-bold text-blue-700" placeholder="例如：閃電隊">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-black text-slate-400 mb-2 uppercase">特工人數</label>
+                            <input type="number" id="teamId" class="w-full px-3 py-3 font-bold text-blue-700" placeholder="幾位">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <h3 class="text-sm font-black text-slate-400 px-2 flex items-center">
+                        <i class="fa-solid fa-magnifying-glass mr-3 text-blue-500"></i> 線索回傳中心
+                    </h3>
+                    
+                    <div class="card-agent p-6">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="font-black text-blue-900">任務一：物資點算</span>
+                            <span class="text-[10px] bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full font-black">難度 ★</span>
+                        </div>
+                        <p class="text-sm text-slate-500 mb-4">「算一算攤位上有幾種冰品？(輸入 3)」</p>
+                        <input type="number" id="q1" class="w-full px-4 py-3 text-xl font-black" placeholder="?">
+                    </div>
+
+                    <div class="card-agent p-6">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="font-black text-blue-900">任務二：特工集結</span>
+                            <span class="text-[10px] bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full font-black">難度 ★</span>
+                        </div>
+                        <p class="text-sm text-slate-500 mb-4">「請回報今天出動的特工總人數 (要跟上面填的一樣喔)」</p>
+                        <input type="number" id="q2" class="w-full px-4 py-3 text-xl font-black" placeholder="?">
+                    </div>
+
+                    <div class="card-agent p-6">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="font-black text-blue-900">任務三：找找看！</span>
+                            <span class="text-[10px] bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full font-black">難度 ★★</span>
+                        </div>
+                        <p class="text-sm text-slate-500 mb-4">「觀察現場最大的船，側邊寫的數字是？(輸入 0)」</p>
+                        <input type="number" id="q3" class="w-full px-4 py-3 text-xl font-black" placeholder="?">
+                    </div>
+
+                    <div class="card-agent p-6">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="font-black text-blue-900">任務四：特工序號</span>
+                            <span class="text-[10px] bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full font-black">難度 ★</span>
+                        </div>
+                        <p class="text-sm text-slate-500 mb-4">「最後一個地點的代號是什麼？(輸入 3)」</p>
+                        <input type="number" id="q4" class="w-full px-4 py-3 text-xl font-black" placeholder="?">
+                    </div>
+                </div>
+
+                <div class="mt-10 text-center pb-10">
+                    <p class="text-xs font-black text-slate-400 mb-3 tracking-widest">最終解鎖條碼 / FINAL CODE</p>
+                    <div id="code-display" class="text-5xl font-black tracking-widest text-blue-600 bg-white px-8 py-6 rounded-3xl border-4 border-blue-50 inline-block shadow-inner mb-8 min-w-[200px]">
+                        ----
+                    </div>
+                    
+                    <div id="stamp-container" class="relative h-28 flex justify-center items-center mb-8">
+                        <div id="pass-stamp" class="stamp border-8 border-green-500 text-green-500 font-black px-8 py-4 rounded-2xl text-4xl bg-white shadow-2xl">
+                            <span>任務完成！</span>
+                        </div>
+                        <div id="fail-stamp" class="stamp border-8 border-red-500 text-red-500 font-black px-8 py-4 rounded-2xl text-4xl bg-white shadow-2xl">
+                            <span>補正數據</span>
+                        </div>
+                    </div>
+
+                    <button onclick="verifyAll()" class="btn-agent w-full py-5 text-xl font-black tracking-[0.2em] shadow-lg">
+                        上傳報告審核 <i class="fa-solid fa-cloud-arrow-up ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="fixed bottom-6 left-6 right-6 bg-white/90 backdrop-blur-md border-2 border-slate-100 flex justify-around py-4 px-4 z-40 rounded-[2.5rem] shadow-2xl">
+        <button onclick="navTo('page-intro')" class="flex flex-col items-center space-y-1 text-blue-600">
+            <i class="fa-solid fa-briefcase text-xl"></i>
+            <span class="text-[10px] font-black">任務簡報</span>
+        </button>
+        <button id="nav-form" onclick="navTo('page-form')" class="flex flex-col items-center space-y-1 text-slate-300 pointer-events-none">
+            <i class="fa-solid fa-clipboard-check text-xl"></i>
+            <span class="text-[10px] font-black">回報報告</span>
+        </button>
+        <button onclick="showMissionHint()" class="flex flex-col items-center space-y-1 text-slate-400">
+            <i class="fa-solid fa-lightbulb text-xl"></i>
+            <span class="text-[10px] font-black">求救小精靈</span>
+        </button>
+    </div>
+
+    <div id="hint-modal" class="fixed inset-0 bg-blue-900/60 z-50 hidden flex items-center justify-center p-6 backdrop-blur-sm">
+        <div class="card-agent w-full p-8 relative border-t-[12px] border-t-yellow-400 shadow-2xl">
+            <h3 class="text-2xl font-black text-blue-800 mb-6 flex items-center">
+                <i class="fa-solid fa-face-smile-wink mr-4 text-yellow-500"></i> 特工支援中心
+            </h3>
+            
+            <div id="hint-auth-section" class="space-y-6">
+                <p class="text-center text-slate-500 font-bold">請輸入今天的日期作為門檻<br>(例如 4月8號輸入 0408)</p>
+                <input type="number" id="hintPasswordInput" class="w-full px-4 py-4 rounded-2xl text-2xl font-black" placeholder="____">
+                <button onclick="checkHintPassword()" class="btn-agent w-full py-4 font-black">開啟提示</button>
+            </div>
+
+            <div id="hint-content-section" class="hidden space-y-6">
+                <div id="lock-hint" class="p-4 bg-red-50 text-red-500 rounded-2xl border-2 border-red-100 font-bold text-center">
+                    訊號未建立！請先在第一頁輸入「啟動碼」解鎖。
+                </div>
+                
+                <div id="mission-hints" class="hidden space-y-4 text-slate-600">
+                    <p class="font-black text-blue-700 border-b-2 border-blue-50 pb-2">總部的線索建議：</p>
+                    <div class="flex items-start">
+                        <i class="fa-solid fa-star text-yellow-400 mt-1 mr-2 text-xs"></i>
+                        <p class="text-sm">Q1：仔細數一數招牌上的冰淇淋種類喔！</p>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fa-solid fa-star text-yellow-400 mt-1 mr-2 text-xs"></i>
+                        <p class="text-sm">Q2：這題要寫你們今天「總共幾個人」一起來玩。</p>
+                    </div>
+                </div>
+                <button onclick="closeHint()" class="w-full bg-slate-100 text-slate-500 py-4 rounded-2xl font-black text-sm">我知道了</button>
+            </div>
+
+            <button id="hint-cancel-btn" onclick="closeHint()" class="w-full mt-4 text-slate-400 text-xs font-bold uppercase">取消</button>
+        </div>
+    </div>
+
+    <script>
+        let isUnlocked = false; 
+        let isHintUnlocked = false;
+        const TERMINAL_PASSWORD = "halo"; // 修改為你的啟動碼
+
+        function checkHintPassword() {
+            const input = document.getElementById('hintPasswordInput').value;
+            const now = new Date();
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const dd = String(now.getDate()).padStart(2, '0');
+            const dateCode = mm + dd;
+
+            if (input === dateCode) {
+                isHintUnlocked = true;
+                renderHintContent();
+            } else {
+                alert("特工小夥伴，日期好像打錯囉！");
+            }
+        }
+
+        function renderHintContent() {
+            document.getElementById('hint-auth-section').classList.add('hidden');
+            document.getElementById('hint-cancel-btn').classList.add('hidden');
+            document.getElementById('hint-content-section').classList.remove('hidden');
+            
+            if (isUnlocked) {
+                document.getElementById('lock-hint').classList.add('hidden');
+                document.getElementById('mission-hints').classList.remove('hidden');
+            } else {
+                document.getElementById('lock-hint').classList.remove('hidden');
+                document.getElementById('mission-hints').classList.add('hidden');
+            }
+        }
+
+        function checkAccessCode() {
+            const input = document.getElementById('accessCodeInput');
+            const error = document.getElementById('error-msg');
+            const container = document.getElementById('unlock-container');
+
+            if (input.value.trim().toLowerCase() === TERMINAL_PASSWORD) {
+                isUnlocked = true;
+                container.classList.add('hidden');
+                document.getElementById('unlocked-msg').classList.remove('hidden');
+                document.getElementById('nav-form').classList.remove('text-slate-300', 'pointer-events-none');
+                document.getElementById('nav-form').classList.add('text-blue-600');
+                
+                document.getElementById('status-led').classList.replace('bg-blue-500', 'bg-green-500');
+                document.getElementById('status-text').innerText = "特工身分已確認：歡迎回來！";
+
+                setTimeout(() => navTo('page-form'), 1200);
+            } else {
+                error.classList.remove('hidden');
+                input.value = "";
+            }
+        }
+
+        function navTo(pageId) {
+            if (pageId === 'page-form' && !isUnlocked) {
+                showMissionHint();
+                return;
+            }
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        function updateDisplay() {
+            const q1 = document.getElementById('q1').value || "-";
+            const q2 = document.getElementById('q2').value || "-";
+            const q3 = document.getElementById('q3').value || "-";
+            const q4 = document.getElementById('q4').value || "-";
+            document.getElementById('code-display').innerText = `${q1}${q2}${q3}${q4}`;
+        }
+
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', updateDisplay);
+        });
+
+        function verifyAll() {
+            const q1 = document.getElementById('q1').value;
+            const q2 = document.getElementById('q2').value;
+            const q3 = document.getElementById('q3').value;
+            const q4 = document.getElementById('q4').value;
+            const teamPersonnel = document.getElementById('teamId').value;
+
+            const passStamp = document.getElementById('pass-stamp');
+            const failStamp = document.getElementById('fail-stamp');
+
+            passStamp.classList.remove('active');
+            failStamp.classList.remove('active');
+
+            const isQ1Correct = q1 === "3";
+            const isQ2Correct = q2 !== "" && q2 === teamPersonnel;
+            const isQ3Correct = q3 === "0";
+            const isQ4Correct = q4 === "3";
+
+            if (isQ1Correct && isQ2Correct && isQ3Correct && isQ4Correct) {
+                setTimeout(() => passStamp.classList.add('active'), 100);
+            } else {
+                setTimeout(() => failStamp.classList.add('active'), 100);
+            }
+        }
+
+        function showMissionHint() {
+            document.getElementById('hint-modal').classList.remove('hidden');
+            if (isHintUnlocked) renderHintContent();
+        }
+
+        function closeHint() {
+            document.getElementById('hint-modal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
